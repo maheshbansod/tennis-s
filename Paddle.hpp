@@ -20,6 +20,8 @@ public:
     void update(float);
     void revert(float);
 
+    void setTexture(sf::Texture*);
+
 private:
     //virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

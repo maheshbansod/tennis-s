@@ -23,6 +23,7 @@ Game::Game(int width, int height, std::string title) :
     {
         std::cout << "Couldn't load the texture." << std::endl;
     }
+    paddle.setTexture(&texture);
 
     startText.setFont(font);
     exitText.setFont(font);

@@ -8,6 +8,11 @@ Paddle::Paddle(int width, int height) :
     rectshape.setFillColor(sf::Color(127,127, 255));
 }
 
+void Paddle::setTexture(sf::Texture *texture) {
+    rectshape.setTexture(texture);
+    rectshape.setTextureRect(sf::IntRect(0,60,20,200));
+}
+
 void Paddle::update(float dt) {
     move(0,vel*dt);
 }
