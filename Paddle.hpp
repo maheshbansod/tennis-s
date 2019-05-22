@@ -21,6 +21,7 @@ public:
     void revert(float);
 
     void setTexture(sf::Texture*);
+    void setColor(sf::Color);
 
 private:
     //virtual void draw(sf::RenderTarget&, sf::RenderStates) const;

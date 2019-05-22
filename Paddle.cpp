@@ -5,12 +5,15 @@
 Paddle::Paddle(int width, int height) :
     rectshape(sf::Vector2f(width, height)) {
     vel = 0;
-    rectshape.setFillColor(sf::Color(127,127, 255));
 }
 
 void Paddle::setTexture(sf::Texture *texture) {
     rectshape.setTexture(texture);
     rectshape.setTextureRect(sf::IntRect(0,60,20,200));
+}
+
+void Paddle::setColor(sf::Color color) {
+    rectshape.setFillColor(color);
 }
 
 void Paddle::update(float dt) {

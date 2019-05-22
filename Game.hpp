@@ -18,9 +18,11 @@ class Game {
     sf::Text gameOverText;
     sf::RectangleShape border;
     Paddle paddle;
+    Paddle paddle2;
     Ball ball;
     int ballheld;
-    int lives;
+    int melives;
+    int cpulives;
     int lvl;
     int score;
 

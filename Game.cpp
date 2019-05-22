@@ -7,6 +7,7 @@
 Game::Game(int width, int height, std::string title) :
     window(sf::VideoMode(width, height), title, sf::Style::Fullscreen),
     paddle(paddleWidth,paddleHeight),
+    paddle2(paddleWidth, paddleHeight),
     ball(ballRadius)
 {
     this->screen = 0;
@@ -24,6 +25,10 @@ Game::Game(int width, int height, std::string title) :
         std::cout << "Couldn't load the texture." << std::endl;
     }
     paddle.setTexture(&texture);
+    paddle.setColor(sf::Color(127,127,255));
+
+    paddle2.setTexture(&texture);
+    paddle2.setColor(sf::Color(255,127,127));
 
     startText.setFont(font);
     exitText.setFont(font);
@@ -65,11 +70,12 @@ void Game::toInitState() {
 
     //paddle.setPosition((width-paddleWidth)/2, height - paddleHeight - marginHeight);
     paddle.setPosition(marginWidth, (height-paddleHeight)/2);
+    paddle2.setPosition(width-marginWidth-paddleWidth, (height-paddleHeight)/2);
     ball.setPosition(marginWidth+paddleWidth, (height-ballRadius*2)/2);
     //ball.setPosition((width-2*ballRadius)/2, height-paddleHeight-2*ballRadius-1-marginHeight);
     ballheld = 1;
 
-    lives = 3;
+    melives = cpulives = 3;
     lvl = 1;
     score = 0;
 
@@ -100,9 +106,15 @@ void Game::drawInfo()
     heartsprite.setTextureRect(sf::IntRect(0,0,60,60));
     heartsprite.setScale(sf::Vector2f(0.8f,0.8f));
 
-    for(int i=0; i<lives; i++)
+    for(int i=0; i<melives; i++)
     {
         heartsprite.setPosition(sf::Vector2f(marginWidth+i*60,height-marginHeight));
+        window.draw(heartsprite);
+    }
+
+    for(int i=0; i<cpulives; i++)
+    {
+        heartsprite.setPosition(sf::Vector2f(width-marginWidth-60-i*60,height-marginHeight));
         window.draw(heartsprite);
     }
 }
@@ -119,6 +131,7 @@ void Game::draw()
     else if(screen == 1)
     {
         window.draw(paddle);
+        window.draw(paddle2);
         window.draw(ball);
         drawInfo();
     } else if(screen == 2) {
@@ -238,16 +251,27 @@ void Game::handleEvents()
 void Game::update(float dt)
 {
     sf::Vector2f pPos = paddle.getPosition();
+    sf::Vector2f p2Pos = paddle2.getPosition();
     sf::Vector2f pSize = paddle.getSize();
+    sf::Vector2f p2Size = paddle2.getSize();
     paddle.update(dt);
+    paddle2.update(dt);
     if(paddle.isOutOfBounds(marginHeight, height-marginHeight))
     {
         paddle.revert(dt);
+    }
+    if(paddle2.isOutOfBounds(marginHeight, height-marginHeight))
+    {
+        paddle2.revert(dt);
     }
     if(ballheld == 1)
     {
         ball.setPosition(sf::Vector2f(pPos.x+pSize.x,
                                       pPos.y+pSize.y/2-ballRadius));
+        ball.setVelocity(0.0,0);
+    } else if(ballheld == 2) {
+        ball.setPosition(sf::Vector2f(p2Pos.x,
+                                      p2Pos.y+p2Size.y/2-basllRadius));
         ball.setVelocity(0.0,0);
     }
     else
@@ -261,8 +285,8 @@ void Game::update(float dt)
         {
             if(bPos.x <= marginWidth)
             {
-                lives--;
-                if(lives == 0) {
+                melives--;
+                if(melives == 0) {
                     screen = 2;
                     toInitState();
                 }
@@ -274,13 +298,23 @@ void Game::update(float dt)
         }
 
 
-        if(hasCollided(bPos, sf::Vector2f(d,d),pPos, pSize) != 0)   //ball collided with paddle
+        if(hasCollided(bPos, sf::Vector2f(d,d),pPos, pSize) != 0)
+            //ball collided with paddle
         {
             int ballcenter = bPos.y+d/2;
             int paddlecenter = pPos.y + pSize.y/2;
             int k = pSize.y/2;
             int diff = ballcenter - paddlecenter;
             float angle = PI*(13*diff - 18*k)/(float)(36*k)+PI/(float)2;//-PI*5/(float)12;
+            ball.setVelocity(angle, ballInitVel);
+        } else if(hasCollided(bPos, sf::Vector2f(d,d),p2Pos, p2Size) != 0)
+            //ball collided with paddle 2
+        {
+            int ballcenter = bPos.y+d/2;
+            int paddlecenter = p2Pos.y + p2Size.y/2;
+            int k = p2Size.y/2;
+            int diff = ballcenter - paddlecenter;
+            float angle = -(PI*(13*diff - 18*k)/(float)(36*k))+PI/2;
             ball.setVelocity(angle, ballInitVel);
         }
 
