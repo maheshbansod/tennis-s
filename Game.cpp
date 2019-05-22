@@ -269,9 +269,9 @@ void Game::update(float dt)
         ball.setPosition(sf::Vector2f(pPos.x+pSize.x,
                                       pPos.y+pSize.y/2-ballRadius));
         ball.setVelocity(0.0,0);
-    } else if(ballheld == 2) {
-        ball.setPosition(sf::Vector2f(p2Pos.x,
-                                      p2Pos.y+p2Size.y/2-basllRadius));
+    } else if(ballheld == 2) { /**held by cpu**/
+        ball.setPosition(sf::Vector2f(p2Pos.x-2*ballRadius,
+                                      p2Pos.y+p2Size.y/2-ballRadius));
         ball.setVelocity(0.0,0);
     }
     else
@@ -292,6 +292,12 @@ void Game::update(float dt)
                 }
                 ballheld=1;
                 return;
+            } else if(bPos.x+d >= width-marginWidth) {
+                cpulives--;
+                if(cpulives == 0) {
+                    /**nextLevel();**/
+                }
+                ballheld = 2;
             }
             ball.revert(dt);
             ball.bounce(oobstat);
