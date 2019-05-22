@@ -247,14 +247,45 @@ void Game::handleEvents()
     }
 }
 
+void Game::perfectAI(float dt) {
+
+    static int cnt = 0;
+
+    if(ballheld == 2) {
+        if(aitimer < 0) {
+            ballheld = 0;
+            ball.bounce(1);
+            cnt = 0;
+        } else {
+            aitimer -= dt;
+            cnt++;
+            if(cnt %70 == 0) {
+                paddle2.setVelocity( ((rand()%2)*2-1)*paddleVel );
+            }
+        }
+    } else {
+
+        int pcenter = paddle2.getPosition().y + paddle2.getSize().y/2;
+        int bcenter = ball.getPosition().y+ballRadius;
+        int diff = pcenter - bcenter;
+        if(diff > 0) paddle2.setVelocity(-paddleVel);
+        else if(diff < 0) paddle2.setVelocity(paddleVel);
+        else paddle2.setVelocity(0);
+    }
+}
+
 void Game::update(float dt)
 {
     sf::Vector2f pPos = paddle.getPosition();
     sf::Vector2f p2Pos = paddle2.getPosition();
     sf::Vector2f pSize = paddle.getSize();
     sf::Vector2f p2Size = paddle2.getSize();
+    perfectAI(dt);
+
     paddle.update(dt);
     paddle2.update(dt);
+
+
     if(paddle.isOutOfBounds(marginHeight, height-marginHeight))
     {
         paddle.revert(dt);
@@ -296,6 +327,7 @@ void Game::update(float dt)
                 if(cpulives == 0) {
                     /**nextLevel();**/
                 }
+                aitimer = 3; /**1 sec*/
                 ballheld = 2;
             }
             ball.revert(dt);

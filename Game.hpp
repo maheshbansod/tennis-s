@@ -26,9 +26,11 @@ class Game {
     int lvl;
     int score;
 
+    float aitimer;
+
     static const int paddleWidth = 20;
     static const int paddleHeight = 200;
-    static const int paddleVel = 500;
+    static const int paddleVel = 200;
     static const int ballRadius = 10;
     static const int ballInitVel = 500;
     static const int marginWidth = 10;
@@ -45,6 +47,8 @@ public:
     void resetTextColors();
 
     void toInitState();
+
+    void perfectAI(float); /**not really perfect(yet)**/
 
     bool isRunning();
     int hasCollided(sf::Vector2f, sf::Vector2f, sf::Vector2f, sf::Vector2f);
