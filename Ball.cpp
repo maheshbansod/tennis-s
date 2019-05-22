@@ -5,25 +5,17 @@ Ball::Ball(int r) :
     circle(r),
     vel(0,0) {
     circle.setFillColor(sf::Color::White);
-//    reverted = true;
- //   bounced = true;
 }
 
 void Ball::update(float dt) {
-    //reverted = false;
-    //bounced = false;
     move(vel*dt);
 }
 
 void Ball::revert(float dt) {
-    //if(reverted) return;
-    //reverted = true;
     move(-vel*dt);
 }
 
 void Ball::bounce(int dir) {
-    //if(bounced) return;
-    //bounced = true;
     switch(dir) {
     case 3:
         vel.x = -vel.x;

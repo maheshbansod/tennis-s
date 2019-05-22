@@ -68,11 +68,9 @@ Game::Game(int width, int height, std::string title) :
 
 void Game::toInitState() {
 
-    //paddle.setPosition((width-paddleWidth)/2, height - paddleHeight - marginHeight);
     paddle.setPosition(marginWidth, (height-paddleHeight)/2);
     paddle2.setPosition(width-marginWidth-paddleWidth, (height-paddleHeight)/2);
     ball.setPosition(marginWidth+paddleWidth, (height-ballRadius*2)/2);
-    //ball.setPosition((width-2*ballRadius)/2, height-paddleHeight-2*ballRadius-1-marginHeight);
     ballheld = 1;
 
     melives = cpulives = 3;
@@ -106,11 +104,15 @@ void Game::drawInfo()
     heartsprite.setTextureRect(sf::IntRect(0,0,60,60));
     heartsprite.setScale(sf::Vector2f(0.8f,0.8f));
 
+    heartsprite.setColor(sf::Color::Red);
+
     for(int i=0; i<melives; i++)
     {
         heartsprite.setPosition(sf::Vector2f(marginWidth+i*60,height-marginHeight));
         window.draw(heartsprite);
     }
+
+    heartsprite.setColor(sf::Color(127,127,255));
 
     for(int i=0; i<cpulives; i++)
     {
@@ -191,7 +193,6 @@ void Game::handleEvents()
         case sf::Event::MouseMoved:
             x = event.mouseMove.x;
             y = event.mouseMove.y;
-            //std::cout << x << "," << y << std::endl;
             if(screen == 0)
             {
                 resetTextColors();
@@ -203,8 +204,6 @@ void Game::handleEvents()
                                        exitText.getPosition().y,
                                        exitText.getLocalBounds().width,
                                        exitText.getCharacterSize());
-                //sf::FloatRect exitRect = exitText.getLocalBounds();
-                //std::cout << startRect.top << std::endl;
                 if(startRect.contains(x,y))
                 {
                     startText.setFillColor(sf::Color::Yellow);

@@ -6,8 +6,6 @@
 class Ball : public sf::Drawable, public sf::Transformable{
     sf::Vector2f vel;
     sf::CircleShape circle;
-    //bool reverted;
-    //bool bounced;
 
 public:
     Ball(int r);
