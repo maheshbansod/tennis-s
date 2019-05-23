@@ -24,7 +24,8 @@ class Game {
     int melives;
     int cpulives;
     int lvl;
-    int score;
+    int score; /**stores time.. too lazy to rename now**/
+    int fscore; /**this is final score T_T **/
 
     float aitimer;
 
@@ -47,6 +48,8 @@ public:
     void resetTextColors();
 
     void toInitState();
+
+    int calculateFinalScore();
 
     void perfectAI(float); /**not really perfect(yet)**/
 

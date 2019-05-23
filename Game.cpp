@@ -49,11 +49,12 @@ Game::Game(int width, int height, std::string title) :
     gameOverText.setFillColor(sf::Color::Red);
     gameOverText.setString("Game Over");
     gameOverText.setPosition(sf::Vector2f((width-gameOverText.getLocalBounds().width)/2,
-                                          height/2-bigTextSize));gameOverText.setCharacterSize(bigTextSize);
+                                          height/2-bigTextSize));
+    gameOverText.setCharacterSize(bigTextSize);
 
     gameWinText.setCharacterSize(titleSize);
     gameWinText.setFillColor(sf::Color::Green);
-    gameWinText.setString("Err.. it seems we ran out of levels\nYou win, I guess");
+    gameWinText.setString("You have defeated \n\tda good boi");
     gameWinText.setPosition(sf::Vector2f((width-gameWinText.getLocalBounds().width)/2,
                                           height/2-titleSize));
 
@@ -88,16 +89,16 @@ void Game::drawInfo()
     text.setCharacterSize(marginHeight-10);
     text.setColor(sf::Color::Yellow);
     std::stringstream str;
-    str << "Score: " << score;
+    str << "TIME: " << score;
     text.setString(str.str());
     text.setPosition(sf::Vector2f(width-300,0));
     window.draw(text);
 
-    str.str(std::string());
+    /*str.str(std::string());
     str << "LEVEL: " << lvl;
     text.setString(str.str());
     text.setPosition(sf::Vector2f(marginWidth,0));
-    window.draw(text);
+    window.draw(text);*/
 
     sf::Sprite heartsprite;
     heartsprite.setTexture(texture);
@@ -140,6 +141,18 @@ void Game::draw()
         window.draw(gameOverText);
     } else if(screen == 3) {
         window.draw(gameWinText);
+    }
+    if(screen == 3 || screen == 2) {
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(marginHeight-10);
+        text.setColor(sf::Color::Yellow);
+        std::stringstream str;
+        str << "SCORE: " << fscore;
+        text.setString(str.str());
+        text.setPosition(sf::Vector2f((width-text.getLocalBounds().width)/2,
+                                          height/2+gameWinText.getLocalBounds().height+5));
+        window.draw(text);
     }
     window.draw(border);
 
@@ -274,8 +287,29 @@ void Game::perfectAI(float dt) {
     }
 }
 
+int Game::calculateFinalScore() {
+    /****
+        greater the time spent(variable `score`) -> lesser the final score
+        more lives you have -> more score
+        more opponent lives -> less score
+
+        addition of:
+        20 pts for existing
+        30 for each human life
+        -20 for each cpu life (humans falsely believe that their life is worth more than another)
+        -[time spent in seconds]
+    */
+    return 20 + melives*30 -cpulives*20 -score;
+}
+
 void Game::update(float dt)
 {
+    static float t = 0;
+    t += dt;
+    if(t > 1) {
+        score++;
+        t=0;
+    }
     sf::Vector2f pPos = paddle.getPosition();
     sf::Vector2f p2Pos = paddle2.getPosition();
     sf::Vector2f pSize = paddle.getSize();
@@ -317,6 +351,7 @@ void Game::update(float dt)
             {
                 melives--;
                 if(melives == 0) {
+                    fscore = calculateFinalScore();
                     screen = 2;
                     toInitState();
                 }
@@ -326,9 +361,14 @@ void Game::update(float dt)
                 cpulives--;
                 if(cpulives == 0) {
                     /**nextLevel();**/
+                    fscore = calculateFinalScore();
+                    screen = 3;
+                    toInitState();
+                    return;
                 }
                 aitimer = 3; /**1 sec*/
                 ballheld = 2;
+                return;
             }
             ball.revert(dt);
             ball.bounce(oobstat);
